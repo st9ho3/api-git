@@ -1,5 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
-import type { EventsRepository, WebhookEvent } from "./events-repository.js";
+import type {
+  EventsRepository,
+  SaveWebhookEventInput,
+  SaveWebhookEventResult,
+  WebhookEvent
+} from "./events-repository.js";
 
 type WebhookEventRow = {
   id: string;
@@ -7,6 +13,10 @@ type WebhookEventRow = {
   delivery_id: string;
   repository_full_name: string;
   created_at: Date;
+};
+
+type PostgresError = Error & {
+  code?: string;
 };
 
 export class PostgresEventsRepository implements EventsRepository {
@@ -28,5 +38,41 @@ export class PostgresEventsRepository implements EventsRepository {
       repositoryFullName: row.repository_full_name,
       createdAt: row.created_at.toISOString()
     }));
+  }
+
+  async saveEvent(
+    input: SaveWebhookEventInput
+  ): Promise<SaveWebhookEventResult> {
+    try {
+      await this.pool.query(
+        `
+          insert into webhook_events (
+            id,
+            event_name,
+            delivery_id,
+            repository_full_name,
+            payload
+          )
+          values ($1, $2, $3, $4, $5::jsonb)
+        `,
+        [
+          randomUUID(),
+          input.eventName,
+          input.deliveryId,
+          input.repositoryFullName,
+          JSON.stringify(input.payload)
+        ]
+      );
+
+      return "stored";
+    } catch (error) {
+      const postgresError = error as PostgresError;
+
+      if (postgresError.code === "23505") {
+        return "duplicate";
+      }
+
+      throw error;
+    }
   }
 }
