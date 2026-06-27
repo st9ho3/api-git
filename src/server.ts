@@ -9,6 +9,7 @@ const pool = createPool();
 const app = createApp({
   eventsRepository: new PostgresEventsRepository(pool),
   githubWebhookSecret: getRequiredEnv("GITHUB_WEBHOOK_SECRET"),
+  mcpApiToken: getRequiredEnv("MCP_API_TOKEN"),
   verifyGitHubWebhookSignature
 });
 

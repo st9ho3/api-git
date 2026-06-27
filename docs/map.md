@@ -13,6 +13,11 @@ If you are looking for where to make a change, start here and follow the narrowe
 - Read: [docs/architecture.md](/Users/panagiotisstachoulis/Desktop/API/docs/architecture.md)
 - Touch: [src/app.ts](/Users/panagiotisstachoulis/Desktop/API/src/app.ts), [src/server.ts](/Users/panagiotisstachoulis/Desktop/API/src/server.ts)
 
+### MCP endpoint and tools
+
+- Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-4-mcp-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-4-mcp-design.md)
+- Touch: [src/app.ts](/Users/panagiotisstachoulis/Desktop/API/src/app.ts), [src/mcp.ts](/Users/panagiotisstachoulis/Desktop/API/src/mcp.ts), [src/server.ts](/Users/panagiotisstachoulis/Desktop/API/src/server.ts)
+
 ### Database connection and persistence
 
 - Read: [docs/architecture.md](/Users/panagiotisstachoulis/Desktop/API/docs/architecture.md)
@@ -39,7 +44,13 @@ If you are looking for where to make a change, start here and follow the narrowe
 - Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-1-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-1-design.md)
 - Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md)
 - Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
+- Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-4-mcp-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-4-mcp-design.md)
 - Touch the matching phase spec when the behavior of that phase changes.
+
+### Deployment and production runtime
+
+- Read: [README.md](/Users/panagiotisstachoulis/Desktop/API/README.md)
+- Touch: [README.md](/Users/panagiotisstachoulis/Desktop/API/README.md) when Railway deployment or production environment setup changes
 
 ### New work entrypoint
 

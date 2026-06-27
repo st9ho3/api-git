@@ -157,4 +157,126 @@ describe("learning API", () => {
     expect(response.status).toBe(202);
     expect(response.body).toEqual({ ok: true });
   });
+
+  it("exposes webhook events through the MCP tool", async () => {
+    const app = createApp({
+      mcpApiToken: "test-mcp-token",
+      eventsRepository: {
+        listEvents: async () => [
+          {
+            id: "evt_1",
+            eventName: "issues",
+            deliveryId: "delivery_1",
+            repositoryFullName: "octo/example",
+            createdAt: "2026-06-27T10:00:00.000Z"
+          }
+        ],
+        saveEvent: async () => "stored"
+      }
+    });
+
+    const server = app.listen(0);
+    const address = server.address();
+
+    if (typeof address !== "object" || address === null) {
+      throw new Error("Expected test server to listen on a TCP port");
+    }
+
+    const { Client } = await import("@modelcontextprotocol/sdk/client/index.js");
+    const { StreamableHTTPClientTransport } = await import(
+      "@modelcontextprotocol/sdk/client/streamableHttp.js"
+    );
+
+    const client = new Client({
+      name: "learning-api-test-client",
+      version: "0.1.0"
+    });
+    const transport = new StreamableHTTPClientTransport(
+      new URL(`http://127.0.0.1:${address.port}/mcp`),
+      {
+        requestInit: {
+          headers: {
+            Authorization: "Bearer test-mcp-token"
+          }
+        }
+      }
+    );
+
+    try {
+      await client.connect(transport);
+
+      const result = await client.callTool({
+        name: "list_webhook_events",
+        arguments: {}
+      });
+
+      expect(result.content).toEqual([
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              events: [
+                {
+                  id: "evt_1",
+                  eventName: "issues",
+                  deliveryId: "delivery_1",
+                  repositoryFullName: "octo/example",
+                  createdAt: "2026-06-27T10:00:00.000Z"
+                }
+              ]
+            },
+            null,
+            2
+          )
+        }
+      ]);
+    } finally {
+      await client.close();
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      });
+    }
+  });
+
+  it("rejects MCP requests without a bearer token", async () => {
+    const app = createApp({
+      mcpApiToken: "test-mcp-token",
+      eventsRepository: {
+        listEvents: async () => [],
+        saveEvent: async () => "stored"
+      }
+    });
+
+    const response = await request(app)
+      .post("/mcp")
+      .send({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} });
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({ error: "Unauthorized" });
+  });
+
+  it("rejects MCP requests with the wrong bearer token", async () => {
+    const app = createApp({
+      mcpApiToken: "test-mcp-token",
+      eventsRepository: {
+        listEvents: async () => [],
+        saveEvent: async () => "stored"
+      }
+    });
+
+    const response = await request(app)
+      .post("/mcp")
+      .set("Authorization", "Bearer wrong-token")
+      .send({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} });
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({ error: "Unauthorized" });
+  });
 });

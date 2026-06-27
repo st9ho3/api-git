@@ -1,13 +1,16 @@
 import express from "express";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type {
   EventsRepository,
   SaveWebhookEventInput
 } from "./events-repository.js";
 import { verifyGitHubWebhookSignature as defaultVerifyGitHubWebhookSignature } from "./github-webhook-signature.js";
+import { createMcpServer } from "./mcp.js";
 
 type CreateAppOptions = {
   eventsRepository?: EventsRepository;
   githubWebhookSecret?: string;
+  mcpApiToken?: string;
   verifyGitHubWebhookSignature?: GitHubWebhookVerifier;
 };
 
@@ -32,6 +35,13 @@ function isRepositoryPayload(
   return typeof value === "object" && value !== null;
 }
 
+function hasValidBearerToken(
+  authorizationHeader: string | undefined,
+  expectedToken: string
+) {
+  return authorizationHeader === `Bearer ${expectedToken}`;
+}
+
 export function createApp(options: CreateAppOptions = {}) {
   const app = express();
   const eventsRepository = options.eventsRepository ?? emptyEventsRepository;
@@ -53,6 +63,40 @@ export function createApp(options: CreateAppOptions = {}) {
       next(error);
     }
   });
+
+  if (options.mcpApiToken) {
+    app.use("/mcp", (request, response, next) => {
+      if (
+        !hasValidBearerToken(
+          request.get("Authorization"),
+          options.mcpApiToken as string
+        )
+      ) {
+        response.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
+      next();
+    });
+
+    app.post("/mcp", express.json(), async (request, response, next) => {
+      try {
+        const mcpServer = createMcpServer(eventsRepository);
+        const transport = new StreamableHTTPServerTransport({
+          sessionIdGenerator: undefined
+        });
+
+        await mcpServer.connect(transport);
+        await transport.handleRequest(request, response, request.body);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+    app.all("/mcp", (_request, response) => {
+      response.status(405).json({ error: "Method not allowed" });
+    });
+  }
 
   app.post(
     "/webhooks/github",

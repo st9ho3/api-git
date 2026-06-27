@@ -38,9 +38,33 @@ Record:
 
 - [Phase 3 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
 
+### ADR 004: Deploy the Phase 3 API on Railway
+
+Why:
+
+- Railway matches the project goal of showing how the API moves from local development to a real hosted service.
+- `npm start` already runs the compiled server the same way the platform expects in production.
+- Keeping deployment on the same phase makes the runtime, database, and webhook flow easier to understand as one path.
+
+Record:
+
+- [Phase 3 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
+
+### ADR 005: Expose webhook events through protected in-process MCP
+
+Why:
+
+- MCP should read through the same repository boundary as `GET /events` instead of calling the HTTP route internally.
+- Keeping MCP inside the existing API service avoids a second deployment and keeps the learning path focused.
+- A simple bearer token protects the public Railway endpoint without introducing OAuth before there are multiple users or third-party authorization needs.
+
+Record:
+
+- [Phase 4 MCP Design](docs/superpowers/specs/2026-06-27-learning-api-phase-4-mcp-design.md)
+
 ## Next ADRs
 
 Future phases should add a new ADR entry when we decide:
 
-- how Railway deployment is configured,
-- how the MCP server exposes tools over the existing API and database model.
+- whether the MCP endpoint needs OAuth or another multi-user authorization model.
+- whether MCP should split into its own service for independent scaling or ownership.
