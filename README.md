@@ -35,6 +35,33 @@ Create the table in Neon with the SQL from [sql/webhook_events.sql](/Users/panag
 
 For now, `GET /events` reads and returns rows ordered by newest first. Writing webhook rows comes in Phase 3.
 
+## Phase 3: GitHub Webhook Ingestion
+
+Phase 3 adds `POST /webhooks/github`.
+
+That route will:
+
+- read the raw GitHub request body,
+- verify `X-Hub-Signature-256` with `GITHUB_WEBHOOK_SECRET`,
+- store accepted deliveries in `webhook_events`,
+- return a minimal acknowledgement on success.
+
+In this phase, the source of truth for accepted webhook data is the database row, not the POST response. After a successful webhook delivery, use `GET /events` to inspect what was stored.
+
+Add this to `.env`:
+
+```sh
+GITHUB_WEBHOOK_SECRET=your-shared-secret
+```
+
+The local testing flow for this phase is:
+
+1. Run the API locally.
+2. Expose it with a tunnel such as ngrok.
+3. Configure the GitHub webhook URL to point at `/webhooks/github`.
+4. Send a test delivery from GitHub.
+5. Confirm receipt with `GET /events`.
+
 ## Commands
 
 Install dependencies:

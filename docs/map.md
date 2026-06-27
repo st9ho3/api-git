@@ -38,6 +38,7 @@ If you are looking for where to make a change, start here and follow the narrowe
 
 - Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-1-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-1-design.md)
 - Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md)
+- Read: [docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md](/Users/panagiotisstachoulis/Desktop/API/docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
 - Touch the matching phase spec when the behavior of that phase changes.
 
 ### New work entrypoint

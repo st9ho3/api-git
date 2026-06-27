@@ -4,7 +4,8 @@ This project is a learning-first API that grows in small phases:
 
 - Phase 1 establishes the local TypeScript and Express server shape.
 - Phase 2 replaces the hardcoded events response with a Neon/Postgres-backed repository.
-- Later phases will add webhook ingestion, deployment, and an MCP server.
+- Phase 3 adds GitHub webhook ingestion with signature verification and persisted writes.
+- Later phases will add deployment and an MCP server.
 
 ## Current System Shape
 
@@ -12,13 +13,14 @@ This project is a learning-first API that grows in small phases:
 - [src/app.ts](/Users/panagiotisstachoulis/Desktop/API/src/app.ts) defines the HTTP routes and accepts injected dependencies.
 - [src/server.ts](/Users/panagiotisstachoulis/Desktop/API/src/server.ts) is the runtime entrypoint.
 - [src/db.ts](/Users/panagiotisstachoulis/Desktop/API/src/db.ts) creates the Postgres connection pool from `DATABASE_URL`.
-- [src/postgres-events-repository.ts](/Users/panagiotisstachoulis/Desktop/API/src/postgres-events-repository.ts) loads persisted webhook events.
+- [src/postgres-events-repository.ts](/Users/panagiotisstachoulis/Desktop/API/src/postgres-events-repository.ts) reads and writes persisted webhook events.
 - [sql/webhook_events.sql](/Users/panagiotisstachoulis/Desktop/API/sql/webhook_events.sql) defines the current database schema.
 
 ## Detailed Design Docs
 
 - [Phase 1 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-1-design.md)
 - [Phase 2 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md)
+- [Phase 3 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
 
 ## Intended Evolution
 
@@ -26,7 +28,7 @@ The architecture is intentionally simple:
 
 - REST API first.
 - Database persistence second.
-- Webhook ingestion next.
+- Webhook ingestion third.
 - MCP exposure after the API behavior is already clear and testable.
 
 That sequence keeps each concept visible while avoiding unnecessary abstraction early.

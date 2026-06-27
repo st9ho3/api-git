@@ -26,11 +26,21 @@ Record:
 
 - [Phase 2 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-2-design.md)
 
+### ADR 003: Keep webhook acknowledgement minimal and persist the real record
+
+Why:
+
+- The learning goal for Phase 3 is to show the full webhook write path from GitHub request to durable storage.
+- A minimal `202` response keeps the webhook endpoint focused on accepting deliveries while `GET /events` stays the read surface for inspection.
+- Signature verification needs access to the exact raw request body, so the HTTP layer must stay explicit about request parsing before persistence.
+
+Record:
+
+- [Phase 3 Design](docs/superpowers/specs/2026-06-27-learning-api-phase-3-design.md)
+
 ## Next ADRs
 
 Future phases should add a new ADR entry when we decide:
 
-- how webhook payloads are stored,
-- how GitHub signatures are verified,
 - how Railway deployment is configured,
 - how the MCP server exposes tools over the existing API and database model.
