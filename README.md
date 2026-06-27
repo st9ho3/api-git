@@ -33,13 +33,13 @@ DATABASE_URL=postgresql://...
 
 Create the table in Neon with the SQL from [sql/webhook_events.sql](/Users/panagiotisstachoulis/Desktop/API/sql/webhook_events.sql).
 
-For now, `GET /events` reads and returns rows ordered by newest first. Writing webhook rows comes in Phase 3.
+`GET /events` reads and returns rows ordered by newest first, including GitHub webhook deliveries accepted by the Phase 3 route.
 
 ## Phase 3: GitHub Webhook Ingestion
 
-Phase 3 adds `POST /webhooks/github`.
+Phase 3 includes `POST /webhooks/github`.
 
-That route will:
+That route:
 
 - read the raw GitHub request body,
 - verify `X-Hub-Signature-256` with `GITHUB_WEBHOOK_SECRET`,
